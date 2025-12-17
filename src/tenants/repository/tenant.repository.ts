@@ -33,4 +33,14 @@ export class TenantRepository extends Repository<Tenant> {
     await this.restore(id);
     return await this.findActiveById(id);
   }
+
+  async existsByName(name: string): Promise<boolean> {
+    const count = await this.count({
+      where: {
+        name: name.toLowerCase(),
+        deleted_at: IsNull(),
+      },
+    });
+    return count > 0;
+  }
 }

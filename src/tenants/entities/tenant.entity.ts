@@ -1,10 +1,10 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
+import { BaseTagEntity } from 'src/common/entities/base.tag.entity';
 import { Entity, Column } from 'typeorm';
 import { TenantCreateRequest } from '../request/tenant.request';
 import { TenantCreateResponse } from '../response/tenant.response';
 
 @Entity()
-export class Tenant extends BaseEntity {
+export class Tenant extends BaseTagEntity {
   @Column()
   name: string;
 
@@ -15,6 +15,7 @@ export class Tenant extends BaseEntity {
     const tenant = new Tenant();
     tenant.name = request.name;
     tenant.description = request.description;
+    tenant.request_id = crypto.randomUUID();
     return tenant;
   }
 

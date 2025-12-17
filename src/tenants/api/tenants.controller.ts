@@ -17,7 +17,7 @@ import {
 export class TenantsController {
   constructor(private readonly tenantsService: TenantsService) {}
 
-  @Post()
+  @Post('')
   create(@Body() request: TenantCreateRequest) {
     return this.tenantsService.create(request);
   }
@@ -38,7 +38,12 @@ export class TenantsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tenantsService.remove(id);
+  softDelete(@Param('id') id: string) {
+    return this.tenantsService.softDelete(id);
+  }
+
+  @Patch(':id/restore')
+  restore(@Param('id') id: string) {
+    return this.tenantsService.restore(id);
   }
 }

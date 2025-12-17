@@ -3,9 +3,10 @@ import {
   Column,
   VersionColumn,
   DeleteDateColumn,
+  BaseEntity,
 } from 'typeorm';
 
-export abstract class BaseEntity {
+export abstract class BaseTagEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
