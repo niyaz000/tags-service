@@ -8,14 +8,14 @@ import { Tenant } from '../entities/tenant.entity';
 import { TenantCreateResponse } from '../response/tenant.response';
 import { DuplicateEntityException } from 'src/exception/duplicate.entity.exception';
 import { EntityType } from 'src/common/enum/entity.types';
+import { RequestLogger } from 'src/common/logger/request-logger.service';
 
 @Injectable()
 export class TenantsService {
-  private readonly logger = new Logger(TenantsService.name, {
-    timestamp: true,
-  });
 
-  constructor(private readonly tenantRepository: TenantRepository) {}
+  constructor(private readonly tenantRepository: TenantRepository,
+    private readonly logger: RequestLogger
+  ) {}
 
   async create(request: TenantCreateRequest): Promise<TenantCreateResponse> {
     this.logger.log(`Creating tenant with name: ${request.name}`);
@@ -37,6 +37,10 @@ export class TenantsService {
   async findOne(id: string): Promise<TenantCreateResponse> {
     const entity = await this.tenantRepository.findActiveById(id);
     return Tenant.toDto(entity);
+  }
+
+  async getTenant(id: string): Promise<Tenant> {
+    return await this.tenantRepository.findActiveById(id);
   }
 
   update(id: string, request: TenantUpdateRequest) {

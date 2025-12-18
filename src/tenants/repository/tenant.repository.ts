@@ -1,25 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository, IsNull } from 'typeorm';
 import { Tenant } from '../entities/tenant.entity';
+import EntityNotFoundException from 'src/exception/EntityNotFoundException';
+import { EntityType } from 'src/common/enum/entity.types';
 
 @Injectable()
 export class TenantRepository extends Repository<Tenant> {
-  constructor(private readonly dataSource: DataSource) {
-    super(Tenant, dataSource.createEntityManager());
-  }
 
-  async findActiveById(id: string): Promise<Tenant> {
-    return this.findOneOrFail({
-      where: {
-        public_id: id,
-        deleted_at: IsNull(),
-      },
-    });
-  }
+    constructor(private readonly dataSource: DataSource) {
+        super(Tenant, dataSource.createEntityManager());
+    }
 
-  async updateTenant(tenant: Tenant): Promise<Tenant> {
-    return await this.save(tenant);
-  }
+    async findActiveById(id: string): Promise<Tenant> {
+        const tenant = await this.findOneOrFail({
+            where: {
+            public_id: id,
+            deleted_at: IsNull(),
+            },
+        });
+        if (!tenant) {
+            throw new EntityNotFoundException(EntityType.TENANT, 'tenantId', id);
+        }
+        return tenant;
+    }
+
+    async updateTenant(tenant: Tenant): Promise<Tenant> {
+        return await this.save(tenant);
+    }
 
   async softDeleteById(id: string): Promise<void> {
     const tenant = await this.findActiveById(id);

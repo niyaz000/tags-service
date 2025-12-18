@@ -39,4 +39,9 @@ export abstract class BaseTagEntity extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: false })
   request_id: string;
+
+  isActive() : boolean {
+    return !this.deleted_at;
+  }
+
 }

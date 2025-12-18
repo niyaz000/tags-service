@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -7,6 +7,7 @@ import { TenantsModule } from './tenants/tenants.module';
 import { ServicesModule } from './services/services.module';
 import { TagsModule } from './tags/tags.module';
 import { TagEntitiesModule } from './tag_entities/tag_entities.module';
+import { RequestMiddleWare } from './filters/request.middleware';
 
 @Module({
   imports: [
@@ -37,4 +38,10 @@ import { TagEntitiesModule } from './tag_entities/tag_entities.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RequestMiddleWare)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
